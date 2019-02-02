@@ -61,7 +61,7 @@ export default createAppContainer(
         {
             Room: RoomScreen,
             CreateRoom: CreateRoomScreen,
-            Main: {
+            Tabs: {
                 screen: MainTabs,
                 navigationOptions: {
                     header: null
@@ -69,7 +69,7 @@ export default createAppContainer(
             }
         },
         {
-            initialRouteName: "Main"
+            initialRouteName: "Tabs"
         }
     )
 )
