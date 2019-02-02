@@ -1,3 +1,4 @@
+import RoomListItem from "components/RoomListItem"
 import { loadRooms } from "lib/redux/roomlist/actions"
 import store from "lib/redux/store"
 import React, { Component } from "react"
@@ -5,7 +6,6 @@ import { ActivityIndicator, FlatList, Image, View } from "react-native"
 import { FAB, Headline } from "react-native-paper"
 import { connect } from "react-redux"
 import colors from "res/colors"
-import RoomListItem from "./RoomListItem"
 
 class RoomListScreen extends Component {
     static navigationOptions = () => ({

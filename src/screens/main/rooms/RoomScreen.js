@@ -1,3 +1,4 @@
+import Message from "components/Message"
 import { loadMessages, newMessage } from "lib/redux/roomlist/actions"
 import React, { Component } from "react"
 import {
@@ -10,7 +11,6 @@ import {
 import { IconButton } from "react-native-paper"
 import { connect } from "react-redux"
 import colors from "res/colors"
-import Message from "./Message"
 
 class RoomScreen extends Component {
     static navigationOptions = ({ navigation }) => ({
