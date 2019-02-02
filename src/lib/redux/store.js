@@ -1,4 +1,4 @@
-import fetch from "lib/fetch"
+import apiCall from "lib/apiCall"
 import emit from "lib/socket-io"
 import { applyMiddleware, combineReducers, compose, createStore } from "redux"
 import { persistReducer, persistStore } from "redux-persist"
@@ -30,7 +30,7 @@ const persistedReducer = persistReducer(
 
 const store = createStore(
     persistedReducer,
-    compose(applyMiddleware(thunk.withExtraArgument({ fetch, emit })))
+    applyMiddleware(thunk.withExtraArgument({ apiCall, emit }))
 )
 
 export const persistor = persistStore(store)

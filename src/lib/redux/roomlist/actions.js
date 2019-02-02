@@ -14,14 +14,14 @@ export const addRoom = room => ({
 })
 
 export const addMessage = (roomId, message) => {
-    return (dispatch, getState, { fetch }) => {
+    return (dispatch, getState, { apiCall }) => {
         const {
             user: { userId },
             roomlist: { rooms }
         } = getState()
         const index = rooms.findIndex(item => item._id === roomId)
         if (index === -1) {
-            fetch(`/users/${userId}/rooms/${roomId}`, "get").then(
+            apiCall(`/users/${userId}/rooms/${roomId}`, "get").then(
                 ({ room }) => {
                     dispatch(addRoom(room))
                     dispatch({
@@ -41,32 +41,32 @@ export const addMessage = (roomId, message) => {
 }
 
 export const loadRooms = skip => {
-    return (dispatch, getState, { fetch }) => {
+    return (dispatch, getState, { apiCall }) => {
         const {
             user: { userId }
         } = getState()
-        return fetch(`/users/${userId}/rooms`, "get", {
-            params: { skip }
-        })
-            .then(({ rooms, canLoadMore }) =>
+        return apiCall(`/users/${userId}/rooms`, "get", { params: skip })
+            .then(({ rooms, canLoadMore }) => {
+                console.warn(canLoadMore)
+
                 dispatch({
                     type: LOAD_ROOMS,
                     skip,
                     rooms: rooms.map(item => ({ ...item, skip: 0 })),
                     canLoadMore
                 })
-            )
+            })
             .catch(error => dispatch(addError(error)))
     }
 }
 
 export const loadMessages = (roomId, skip) => {
-    return (dispatch, getState, { fetch }) => {
+    return (dispatch, getState, { apiCall }) => {
         const {
             user: { userId }
         } = getState()
-        return fetch(`/users/${userId}/rooms/${roomId}/messages`, "get", {
-            params: { skip }
+        return apiCall(`/users/${userId}/rooms/${roomId}/messages`, "get", {
+            params: skip
         })
             .then(({ messages }) =>
                 dispatch({
@@ -104,10 +104,10 @@ export const newRoom = () => {
     }
 }
 
-export const newMessage = (roomId, content) => {
+export const newMessage = (roomId, msg) => {
     return (dispatch, _, { emit }) => {
         return new Promise((resolve, reject) => {
-            emit(NEW_MESSAGE, { roomId, content }, function(error) {
+            emit(NEW_MESSAGE, { roomId, msg }, function(error) {
                 if (error) {
                     dispatch(addError(error))
                     reject()

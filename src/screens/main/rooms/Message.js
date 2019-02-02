@@ -1,19 +1,17 @@
-import React from "react"
+import React, { PureComponent } from "react"
 import { Dimensions, StyleSheet, View } from "react-native"
 import { Text } from "react-native-paper"
 import colors from "res/colors"
 
-class Message extends React.PureComponent {
+class Message extends PureComponent {
     render() {
-        const { author, content, first, last, roomMembers, userId } = this.props
-        const { firstName, avatar } = roomMembers.find(
-            item => item._id === author
-        )
-        const mine = author === userId
+        const { from, msg, first, last, roomMembers, userId } = this.props
+        const { givenName, photo } = roomMembers.find(item => item._id === from)
+        const mine = from === userId
         return (
             <View style={mine ? styles.right : styles.left}>
                 {!mine && last ? (
-                    <Text style={styles.author}>{firstName}</Text>
+                    <Text style={styles.from}>{givenName}</Text>
                 ) : null}
                 <View
                     style={[
@@ -23,15 +21,13 @@ class Message extends React.PureComponent {
                                 ? colors.primary
                                 : colors.lightgray
                         }
-                    ]}
-                >
+                    ]}>
                     <Text
                         style={{
                             color: mine ? "white" : "black",
                             fontSize: 15
-                        }}
-                    >
-                        {content}
+                        }}>
+                        {msg}
                     </Text>
                 </View>
             </View>
@@ -54,7 +50,7 @@ const styles = StyleSheet.create({
         alignSelf: "flex-end",
         alignItems: "flex-end"
     },
-    author: {
+    from: {
         fontSize: 12,
         color: colors.gray
     }

@@ -2,9 +2,9 @@ import { SET_USER, REMOVE_USER } from "lib/constants"
 
 const initialState = {
     userId: "",
-    firstName: "",
-    lastName: "",
-    avatar: "",
+    givenName: "",
+    familyName: "",
+    photo: "",
     token: ""
 }
 

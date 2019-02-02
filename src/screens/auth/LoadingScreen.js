@@ -1,29 +1,14 @@
-import { setAuthHeader } from "lib/fetch"
+import { setAuthHeader } from "lib/apiCall"
 import { setupSocket } from "lib/socket-io"
 import React from "react"
-import { ActivityIndicator, View } from "react-native"
 import { connect } from "react-redux"
-import colors from "res/colors"
-
-const Loading = () => {
-    return (
-        <View
-            style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center"
-            }}
-        >
-            <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-    )
-}
+import Loading from "../../components/Loading"
 
 class LoadingScreen extends React.Component {
     componentDidMount() {
         const token = this.props.token
         if (!token) {
-            this.props.navigation.navigate("Auth")
+            this.props.navigation.navigate("Signin")
         } else {
             setAuthHeader(token)
             setupSocket(token)

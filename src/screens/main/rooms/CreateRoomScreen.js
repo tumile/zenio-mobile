@@ -1,48 +1,43 @@
 import { newRoom } from "lib/redux/roomlist/actions"
 import { deselectUser, findUsers, selectUser } from "lib/redux/search/actions"
 import store from "lib/redux/store"
-import React from "react"
+import React, { Component } from "react"
 import { FlatList, Image, StyleSheet, TextInput, View } from "react-native"
-import { Button, Text, TouchableRipple } from "react-native-paper"
-import MaterialIcons from "react-native-vector-icons/MaterialIcons"
+import { Button, Text, TouchableRipple, Chip } from "react-native-paper"
 import { connect } from "react-redux"
 import colors from "res/colors"
-import ViewErrorWrapper from "../ViewErrorWrapper"
 
-class CreateRoomScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-        return {
-            headerStyle: {
-                backgroundColor: colors.primary
-            },
-            headerTintColor: "white",
-            headerTitle: (
-                <TextInput
-                    style={{ flex: 1, color: "white" }}
-                    placeholder="Search user"
-                    placeholderTextColor="white"
-                    autoFocus={true}
-                    onChangeText={text => {
-                        store.dispatch(findUsers(text))
-                    }}
-                />
-            ),
-            headerRight: (
-                <Button
-                    color="white"
-                    loading={!!navigation.getParam("loading", "")}
-                    onPress={() =>
-                        navigation.setParams({
-                            creating:
-                                store.getState().userSearch.selected.length > 0
-                        })
-                    }
-                >
-                    Create
-                </Button>
-            )
-        }
-    }
+class CreateRoomScreen extends Component {
+    static navigationOptions = ({ navigation }) => ({
+        headerStyle: {
+            backgroundColor: colors.primary
+        },
+        headerTintColor: "white",
+        headerTitle: (
+            <TextInput
+                style={{ flex: 1, padding: 10, color: "white", fontSize: 15 }}
+                placeholder="Search user"
+                placeholderTextColor="white"
+                autoFocus={true}
+                onChangeText={text => {
+                    store.dispatch(findUsers(text))
+                }}
+            />
+        ),
+        headerRight: (
+            <Button
+                color="white"
+                uppercase={false}
+                loading={!!navigation.getParam("loading", "")}
+                onPress={() =>
+                    navigation.setParams({
+                        creating: store.getState().search.selected.length > 0
+                    })
+                }>
+                <Text style={{ fontSize: 15, color: "white" }}>Create</Text>
+            </Button>
+        )
+    })
 
     componentDidUpdate(prevProps) {
         if (
@@ -53,44 +48,39 @@ class CreateRoomScreen extends React.Component {
                 this.props.navigation.setParams({ loading: true })
                 this.props
                     .newRoom()
-                    .then(() => this.props.navigation.navigate("RoomList"))
+                    .then(() => this.props.navigation.navigate("Rooms"))
             }
         }
     }
 
-    renderSelectedItem = ({ item }) => (
-        <View style={styles.selectedItemContainer}>
-            <Image
-                style={styles.selectedAvatar}
-                source={{ uri: item.avatar }}
-            />
-            <Text style={{ marginHorizontal: 5 }}>
-                {`${item.firstName} ${item.lastName}`}
-            </Text>
-            <TouchableRipple
-                hitSlop={{ top: 10, left: 10, bottom: 10, right: 10 }}
-                onPress={() =>
-                    requestAnimationFrame(() => this.props.deselectUser(item))
-                }
-            >
-                <MaterialIcons name="cancel" size={16} color={colors.gray} />
-            </TouchableRipple>
-        </View>
+    renderSelectedItem = item => (
+        <Chip
+            key={item._id}
+            mode="outlined"
+            style={{ marginTop: 5, marginLeft: 5 }}
+            avatar={
+                <Image
+                    style={styles.photoSelected}
+                    source={{ uri: item.photo }}
+                />
+            }
+            onPress={() => this.props.deselectUser(item)}>
+            {item.givenName} {item.familyName}
+        </Chip>
     )
 
     renderResultItem = ({ item }) => (
         <TouchableRipple
             onPress={() =>
                 requestAnimationFrame(() => this.props.selectUser(item))
-            }
-        >
-            <View style={styles.resultItemContainer}>
+            }>
+            <View style={styles.containerResultItem}>
                 <Image
-                    style={styles.resultAvatar}
-                    source={{ uri: item.avatar }}
+                    style={styles.photoResult}
+                    source={{ uri: item.photo }}
                 />
                 <Text style={{ fontSize: 16 }}>
-                    {`${item.firstName} ${item.lastName}`}
+                    {`${item.givenName} ${item.familyName}`}
                 </Text>
             </View>
         </TouchableRipple>
@@ -98,16 +88,9 @@ class CreateRoomScreen extends React.Component {
 
     render() {
         return (
-            <ViewErrorWrapper>
-                <View style={{ flexDirection: "row" }}>
-                    <FlatList
-                        keyboardShouldPersistTaps="handled"
-                        horizontal={true}
-                        data={this.props.selected}
-                        keyExtractor={({ _id }) => _id}
-                        renderItem={this.renderSelectedItem}
-                        showsHorizontalScrollIndicator={false}
-                    />
+            <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                    {this.props.selected.map(this.renderSelectedItem)}
                 </View>
                 <FlatList
                     keyboardShouldPersistTaps="handled"
@@ -115,39 +98,33 @@ class CreateRoomScreen extends React.Component {
                     keyExtractor={({ _id }) => _id}
                     renderItem={this.renderResultItem}
                 />
-            </ViewErrorWrapper>
+            </View>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    selectedItemContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 5,
-        paddingVertical: 2
+    photoSelected: {
+        height: 30,
+        width: 30,
+        borderRadius: 15
     },
-    selectedAvatar: {
-        height: 25,
-        width: 25,
-        borderRadius: 50
-    },
-    resultItemContainer: {
+    containerResultItem: {
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 15,
         paddingVertical: 10
     },
-    resultAvatar: {
+    photoResult: {
         height: 50,
         width: 50,
-        borderRadius: 50,
+        borderRadius: 25,
         marginRight: 15
     }
 })
 
 export default connect(
-    ({ userSearch: { results, selected } }) => ({
+    ({ search: { results, selected } }) => ({
         results,
         selected
     }),

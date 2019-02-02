@@ -1,6 +1,6 @@
 // url
 // export const ROUTE = "https://tandapay-chatserver.herokuapp.com"
-export const ROUTE = "http://10.255.248.197:4000"
+export const ROUTE = "http://localhost:4000"
 
 // action types
 export const SET_USER = "SET_USER"
@@ -25,10 +25,9 @@ export const RESET_SEARCH = "RESET_SEARCH"
 // error types
 export const NO_INTERNET_CONNECTION = "NO_INTERNET_CONNECTION"
 export const EMAIL_NOT_FOUND = "EMAIL_NOT_FOUND"
-export const EMAIL_TAKEN = "EMAIL_TAKEN"
+export const EMAIL_USED = "EMAIL_USED"
 export const INVALID_EMAIL = "INVALID_EMAIL"
-export const INVALID_PASSWORD = "INVALID_PASSWORD"
-export const DATABASE_ERROR = "DATABASE_ERROR"
+export const WRONG_PASSWORD = "WRONG_PASSWORD"
 export const UNAUTHORIZED = "UNAUTHORIZED"
-export const INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR"
+export const INTERNAL_ERROR = "INTERNAL_ERROR"
 export const ERROR = "ERROR" // arbitrary error for socket io

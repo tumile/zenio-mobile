@@ -9,7 +9,6 @@ const initialState = {
 export default (state = initialState, action) => {
     switch (action.type) {
         case LOAD_ROOMS:
-            console.log(action.canLoadMore)
             return {
                 skip: action.skip + action.rooms.length,
                 rooms:

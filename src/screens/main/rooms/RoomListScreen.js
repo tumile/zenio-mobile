@@ -1,19 +1,33 @@
 import { loadRooms } from "lib/redux/roomlist/actions"
-import React from "react"
-import { ActivityIndicator, FlatList, View } from "react-native"
-import { FAB } from "react-native-paper"
-import Entypo from "react-native-vector-icons/Entypo"
+import store from "lib/redux/store"
+import React, { Component } from "react"
+import { ActivityIndicator, FlatList, Image, View } from "react-native"
+import { FAB, Headline } from "react-native-paper"
 import { connect } from "react-redux"
 import colors from "res/colors"
-import ViewErrorWrapper from "../ViewErrorWrapper"
 import RoomListItem from "./RoomListItem"
 
-class RoomListScreen extends React.Component {
-    static navigationOptions = {
-        tabBarIcon: ({ tintColor }) => (
-            <Entypo size={22} name="chat" color={tintColor} />
+class RoomListScreen extends Component {
+    static navigationOptions = () => ({
+        headerLeft: (
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center"
+                }}>
+                <Image
+                    style={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: 25,
+                        marginHorizontal: 15
+                    }}
+                    source={{ uri: store.getState().user.photo }}
+                />
+                <Headline>Chats</Headline>
+            </View>
         )
-    }
+    })
 
     state = {
         loading: false,
@@ -21,34 +35,20 @@ class RoomListScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.handleLoadRooms(0)
+        this.loadFirstRooms()
     }
 
-    handleLoadRooms = skip => {
-        this.setState(
-            prev => ({ ...prev, loading: true }),
-            () =>
-                this.props.loadRooms(skip).then(() =>
-                    this.setState(prev => ({
-                        ...prev,
-                        loading: false
-                    }))
-                )
-        )
+    loadFirstRooms = () => {
+        this.setState({ loading: true })
+        this.props.loadRooms(0).then(() => this.setState({ loading: false }))
     }
 
-    handleLoadMore = () => {
+    loadMoreRooms = () => {
         if (!this.state.loadingMore && this.props.canLoadMore) {
-            this.setState(
-                prev => ({ ...prev, loadingMore: true }),
-                () =>
-                    this.props.loadRooms(this.props.skip).then(() =>
-                        this.setState(prev => ({
-                            ...prev,
-                            loadingMore: false
-                        }))
-                    )
-            )
+            this.setState({ loadingMore: true })
+            this.props
+                .loadRooms(this.props.skip)
+                .then(() => this.setState({ loadingMore: false }))
         }
     }
 
@@ -77,8 +77,7 @@ class RoomListScreen extends React.Component {
             <View
                 style={{
                     paddingVertical: 20
-                }}
-            >
+                }}>
                 <ActivityIndicator />
             </View>
         ) : null
@@ -86,16 +85,16 @@ class RoomListScreen extends React.Component {
 
     render() {
         return (
-            <ViewErrorWrapper>
+            <View style={{ flex: 1 }}>
                 <FlatList
                     data={this.props.rooms}
                     keyExtractor={({ _id }) => _id}
                     renderItem={this.renderItem}
                     initialNumToRender={10}
                     ListFooterComponent={this.renderFooter}
-                    onRefresh={() => this.handleLoadRooms(0)}
+                    onRefresh={this.loadFirstRooms}
                     refreshing={this.state.loading}
-                    onEndReached={this.handleLoadMore}
+                    onEndReached={this.loadMoreRooms}
                     onEndReachedThreshold={0.1}
                 />
                 <FAB
@@ -110,7 +109,7 @@ class RoomListScreen extends React.Component {
                     icon="add"
                     onPress={this.navigateCreate}
                 />
-            </ViewErrorWrapper>
+            </View>
         )
     }
 }

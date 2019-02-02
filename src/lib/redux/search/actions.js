@@ -4,8 +4,7 @@ import {
     RESET_SEARCH,
     SELECT_USER
 } from "lib/constants"
-import fetch from "lib/fetch"
-import { addError, removeError } from "lib/redux/error/actions"
+import { addError, removeError } from "../error/actions"
 
 export const resetSearch = () => ({
     type: RESET_SEARCH
@@ -22,11 +21,11 @@ export const deselectUser = user => ({
 })
 
 export const findUsers = searchVal => {
-    return (dispatch, getState) => {
+    return (dispatch, getState, { apiCall }) => {
         const {
-            userSearch: { selected }
+            search: { selected }
         } = getState()
-        return fetch("/users/find", "post", { searchVal, selected })
+        return apiCall("/users/find", "post", { searchVal, selected })
             .then(({ users }) => {
                 dispatch(removeError())
                 dispatch({

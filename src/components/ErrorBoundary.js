@@ -4,7 +4,7 @@ import { Text, View } from "react-native"
 import { connect } from "react-redux"
 import colors from "res/colors"
 
-class ViewErrorWrapper extends React.Component {
+class ErrorBoundary extends React.Component {
     state = {
         displaying: false
     }
@@ -34,8 +34,7 @@ class ViewErrorWrapper extends React.Component {
                             paddingHorizontal: 15,
                             paddingVertical: 10,
                             backgroundColor: colors.error
-                        }}
-                    >
+                        }}>
                         <Text style={{ color: "white" }}>
                             {this.props.message}
                         </Text>
@@ -52,4 +51,4 @@ export default connect(
         message
     }),
     { removeError }
-)(ViewErrorWrapper)
+)(ErrorBoundary)

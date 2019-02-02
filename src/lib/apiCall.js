@@ -8,14 +8,24 @@ export const setAuthHeader = token => {
     else delete axios.defaults.headers.common["Authorization"]
 }
 
-export default (fetch = (path, method, data) => {
+export default (apiCall = (path, method, data) => {
     return new Promise((resolve, reject) => {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected)
                 axios[method](`${ROUTE}${path}`, data)
-                    .then(response => resolve(response.data))
+                    .then(response => {
+                        console.warn("I GOT SOMETHING!")
+                        resolve(response.data)
+                    })
                     .catch(error => reject(error.response.data.error))
             else reject({ type: NO_INTERNET_CONNECTION })
         })
     })
+    // return axios[method](`${ROUTE}${path}`, data)
+    //     .then(response => {
+    //         console.warn(response.data)
+
+    //         resolve(response.data)
+    //     })
+    //     .catch(error => reject(error.response.data.error))
 })

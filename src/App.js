@@ -4,8 +4,8 @@ import { DefaultTheme, Provider as PaperProvider } from "react-native-paper"
 import { Provider as StoreProvider } from "react-redux"
 import { PersistGate } from "redux-persist/integration/react"
 import colors from "res/colors"
-import App from "./screens/AppNavigator"
-import { Loading } from "./screens/LoadingScreen"
+import Loading from "./components/Loading"
+import App from "./navigators/AppNavigator"
 
 const theme = {
     ...DefaultTheme,

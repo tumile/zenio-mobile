@@ -1,27 +1,7 @@
 import { INVALID_EMAIL, REMOVE_USER, SET_USER } from "lib/constants"
-import fetch, { setAuthHeader } from "lib/fetch"
+import { setAuthHeader } from "lib/apiCall"
 import { addError, removeError } from "lib/redux/error/actions"
 import { setupSocket } from "lib/socket-io"
-
-export const loadPaymentInfo = () => {
-    return (dispatch, getState, { fetch }) => {
-        const {
-            user: { userId }
-        } = getState()
-        return fetch(`/users/${userId}/payments`, "get")
-            .then(({ rooms }) =>
-                dispatch({
-                    type: LOAD_PAYMENT_INFO,
-                    rooms
-                })
-            )
-            .catch(error => dispatch(addError(error)))
-    }
-}
-
-export const addPaymentMethod = () => {}
-
-export const makePayment = () => {}
 
 export const setUser = user => ({
     type: SET_USER,
@@ -33,13 +13,13 @@ const removeUser = () => ({
 })
 
 export const authenticate = (path, data) => {
-    return dispatch => {
+    return (dispatch, _, { apiCall }) => {
         return new Promise((resolve, reject) => {
             if (!isValidEmail(data.email)) {
                 dispatch(addError({ type: INVALID_EMAIL }))
                 reject()
             } else {
-                fetch(`/auth/${path}`, "post", data)
+                apiCall(`/auth/${path}`, "post", data)
                     .then(async user => {
                         dispatch(removeError())
                         setAuthHeader(user.token)

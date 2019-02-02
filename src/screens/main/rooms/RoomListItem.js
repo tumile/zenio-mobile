@@ -1,9 +1,9 @@
-import React from "react"
-import { View, Image } from "react-native"
-import { TouchableRipple, Text } from "react-native-paper"
+import React, { PureComponent } from "react"
+import { Image, View } from "react-native"
+import { Text, TouchableRipple } from "react-native-paper"
 import colors from "res/colors"
 
-class RoomListItem extends React.PureComponent {
+class RoomListItem extends PureComponent {
     render() {
         const {
             _id: roomId,
@@ -13,19 +13,21 @@ class RoomListItem extends React.PureComponent {
             userId
         } = this.props
         let latestMess = null,
-            avatars = []
+            photos = []
         if (messages.length > 0) {
             latestMess = {
                 ...messages[0],
-                author: members.find(item => item._id === messages[0].author)
+                from: members.find(item => item._id === messages[0].from)
             }
         }
-        if (latestMess && latestMess.author._id !== userId)
-            avatars.push(latestMess.author)
-        avatars = members.reduce((acc, cur) => {
-            if (acc.length > 1 || cur._id === userId) return acc
-            return [cur, ...acc]
-        }, avatars)
+        if (latestMess && latestMess.from._id !== userId)
+            photos.push(latestMess.from.photo)
+        let rand
+        while (photos.length < 2) {
+            rand = members[Math.floor(Math.random() * members.length)]
+            if (rand._id !== userId && !photos.includes(rand.photo))
+                photos.unshift(rand.photo)
+        }
         const roomName = this.props.roomName
             ? this.props.roomName
             : members
@@ -37,7 +39,7 @@ class RoomListItem extends React.PureComponent {
                   .reduce(
                       (acc, item, index, arr) =>
                           acc +
-                          item.firstName +
+                          item.givenName +
                           (index !== arr.length - 1 ? ", " : ""),
                       ""
                   )
@@ -46,54 +48,72 @@ class RoomListItem extends React.PureComponent {
             <TouchableRipple
                 onPress={() =>
                     requestAnimationFrame(() => navigateRoom(roomName, roomId))
-                }
-            >
+                }>
                 <View
                     style={{
                         flexDirection: "row",
                         alignItems: "center",
-                        padding: 15
-                    }}
-                >
-                    {avatars.length > 1 ? (
-                        avatars.map((item, index) => (
+                        padding: 20
+                    }}>
+                    {photos.length > 1 ? (
+                        <View style={{ flexDirection: "row" }}>
                             <Image
-                                key={item._id}
+                                key={photos[0]}
                                 style={{
                                     position: "absolute",
-                                    left: 11 + 8 * index,
+                                    top: -27,
+                                    left: -5,
                                     width: 50,
                                     height: 50,
-                                    borderRadius: 50,
+                                    borderRadius: 25,
                                     backgroundColor: "white",
                                     borderWidth: 1.5,
                                     borderColor: colors.primary
                                 }}
-                                source={{ uri: item.avatar }}
+                                source={{ uri: photos[0] }}
                             />
-                        ))
+                            <Image
+                                key={photos[1]}
+                                style={{
+                                    position: "absolute",
+                                    top: -17,
+                                    left: 10,
+                                    width: 50,
+                                    height: 50,
+                                    borderRadius: 25,
+                                    backgroundColor: "white",
+                                    borderWidth: 1.5,
+                                    borderColor: colors.primary
+                                }}
+                                source={{ uri: photos[1] }}
+                            />
+                        </View>
                     ) : (
                         <Image
                             style={{
                                 position: "absolute",
-                                left: 15,
-                                width: 50,
-                                height: 50,
-                                borderRadius: 50,
+                                left: 17,
+                                width: 54,
+                                height: 54,
+                                borderRadius: 17,
                                 backgroundColor: "white",
                                 borderWidth: 1.5,
                                 borderColor: colors.primary
                             }}
-                            source={{ uri: avatars[0].avatar }}
+                            source={{ uri: photos[0] }}
                         />
                     )}
-                    <View style={{ marginLeft: 65 }}>
+                    <View style={{ marginLeft: 70 }}>
                         <Text style={{ fontSize: 16 }}>{roomName}</Text>
-                        <Text style={{ color: colors.gray }}>
+                        <Text
+                            style={{ color: colors.gray }}
+                            ellipsizeMode="tail"
+                            numberOfLines={1}>
                             {latestMess
-                                ? `${latestMess.author.firstName}: ${
-                                      latestMess.content
-                                  }`
+                                ? (latestMess.from._id === userId
+                                      ? "Me: "
+                                      : `${latestMess.from.givenName}: `) +
+                                  latestMess.msg
                                 : "Start chatting!"}
                         </Text>
                     </View>

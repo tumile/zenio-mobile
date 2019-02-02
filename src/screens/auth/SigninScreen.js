@@ -1,36 +1,29 @@
-import { EMAIL_TAKEN, INVALID_EMAIL } from "lib/constants"
+import { EMAIL_NOT_FOUND, INVALID_EMAIL, WRONG_PASSWORD } from "lib/constants"
 import { authenticate } from "lib/redux/user/actions"
-import React from "react"
-import { TouchableOpacity, View, SafeAreaView } from "react-native"
+import React, { Component } from "react"
+import { SafeAreaView, TouchableOpacity } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 import { Button, HelperText, Text, TextInput } from "react-native-paper"
 import { connect } from "react-redux"
 
-class SignupScreen extends React.Component {
+class SigninScreen extends Component {
     state = {
-        givenName: "",
-        familyName: "",
         email: "",
         password: "",
         loading: false
     }
 
     handleAuth = () => {
-        const { givenName, familyName, email, password } = this.state
+        const { email, password } = this.state
         this.setState({ loading: true })
         this.props
-            .authenticate("signup", {
-                givenName,
-                familyName,
-                email,
-                password
-            })
+            .authenticate("login", { email, password })
             .then(() => this.props.navigation.navigate("Main"))
             .catch(() => this.setState({ loading: false }))
     }
 
     render() {
-        const { givenName, familyName, email, password, loading } = this.state
+        const { email, password, loading } = this.state
         const {
             error: { type, message },
             navigation: { navigate }
@@ -47,44 +40,14 @@ class SignupScreen extends React.Component {
                         visible={!!message}>
                         {message}
                     </HelperText>
-                    <View style={{ flexDirection: "row" }}>
-                        <TextInput
-                            style={{
-                                backgroundColor: "transparent",
-                                flex: 1,
-                                marginRight: 2.5
-                            }}
-                            label="First Name"
-                            value={givenName}
-                            onChangeText={text =>
-                                this.setState(prev => ({
-                                    ...prev,
-                                    givenName: text
-                                }))
-                            }
-                        />
-                        <TextInput
-                            style={{
-                                backgroundColor: "transparent",
-                                flex: 1,
-                                marginLeft: 2.5
-                            }}
-                            label="Last Name"
-                            value={familyName}
-                            onChangeText={text =>
-                                this.setState(prev => ({
-                                    ...prev,
-                                    familyName: text
-                                }))
-                            }
-                        />
-                    </View>
                     <TextInput
                         style={{ backgroundColor: "transparent" }}
                         label="Email"
                         keyboardType="email-address"
                         autoCapitalize="none"
-                        error={type === INVALID_EMAIL || type === EMAIL_TAKEN}
+                        error={
+                            type === INVALID_EMAIL || type === EMAIL_NOT_FOUND
+                        }
                         value={email}
                         onChangeText={text =>
                             this.setState(prev => ({ ...prev, email: text }))
@@ -95,6 +58,7 @@ class SignupScreen extends React.Component {
                         label="Password"
                         secureTextEntry={true}
                         autoCapitalize="none"
+                        error={type === WRONG_PASSWORD}
                         value={password}
                         onChangeText={text =>
                             this.setState(prev => ({ ...prev, password: text }))
@@ -106,21 +70,19 @@ class SignupScreen extends React.Component {
                         dark={true}
                         uppercase={false}
                         disabled={
-                            [givenName, familyName, email, password].some(
-                                i => i === ""
-                            ) || loading
+                            [email, password].some(i => i === "") || loading
                         }
                         loading={loading}
                         onPress={this.handleAuth}>
-                        Sign Up
+                        Sign In
                     </Button>
                     <TouchableOpacity
                         style={{ marginTop: 15 }}
                         hitSlop={{ left: 10, bottom: 20, right: 10 }}
                         onPress={() => {
-                            navigate("Login")
+                            navigate("Signup")
                         }}>
-                        <Text>Already have an account?</Text>
+                        <Text>Don't have an account? Sign up now!</Text>
                     </TouchableOpacity>
                 </KeyboardAwareScrollView>
             </SafeAreaView>
@@ -131,4 +93,4 @@ class SignupScreen extends React.Component {
 export default connect(
     ({ error }) => ({ error }),
     { authenticate }
-)(SignupScreen)
+)(SigninScreen)
