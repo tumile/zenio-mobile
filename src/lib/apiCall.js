@@ -13,19 +13,9 @@ export default (apiCall = (path, method, data) => {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected)
                 axios[method](`${ROUTE}${path}`, data)
-                    .then(response => {
-                        console.warn("I GOT SOMETHING!")
-                        resolve(response.data)
-                    })
+                    .then(response => resolve(response.data))
                     .catch(error => reject(error.response.data.error))
             else reject({ type: NO_INTERNET_CONNECTION })
         })
     })
-    // return axios[method](`${ROUTE}${path}`, data)
-    //     .then(response => {
-    //         console.warn(response.data)
-
-    //         resolve(response.data)
-    //     })
-    //     .catch(error => reject(error.response.data.error))
 })
