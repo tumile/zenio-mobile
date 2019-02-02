@@ -1,6 +1,6 @@
 // url
-// export const ROUTE = "https://tandapay-chatserver.herokuapp.com"
-export const ROUTE = "http://134.53.166.46:4000"
+export const ROUTE = "https://zenio-server.herokuapp.com"
+// export const ROUTE = "http://134.53.166.46:4000"
 
 // action types
 export const SET_USER = "SET_USER"
