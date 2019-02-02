@@ -25,7 +25,7 @@ export const findUsers = searchVal => {
         const {
             search: { selected }
         } = getState()
-        return apiCall("/users/find", "post", { searchVal, selected })
+        apiCall("/users/find", "post", { searchVal, selected })
             .then(({ users }) => {
                 dispatch(removeError())
                 dispatch({

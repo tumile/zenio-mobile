@@ -45,17 +45,15 @@ export const loadRooms = skip => {
         const {
             user: { userId }
         } = getState()
-        return apiCall(`/users/${userId}/rooms`, "get", { params: skip })
-            .then(({ rooms, canLoadMore }) => {
-                console.warn(canLoadMore)
-
+        return apiCall(`/users/${userId}/rooms?skip=${skip}`, "get")
+            .then(({ rooms, canLoadMore }) =>
                 dispatch({
                     type: LOAD_ROOMS,
                     skip,
                     rooms: rooms.map(item => ({ ...item, skip: 0 })),
                     canLoadMore
                 })
-            })
+            )
             .catch(error => dispatch(addError(error)))
     }
 }
@@ -65,9 +63,10 @@ export const loadMessages = (roomId, skip) => {
         const {
             user: { userId }
         } = getState()
-        return apiCall(`/users/${userId}/rooms/${roomId}/messages`, "get", {
-            params: skip
-        })
+        return apiCall(
+            `/users/${userId}/rooms/${roomId}/messages?skip=${skip}`,
+            "get"
+        )
             .then(({ messages }) =>
                 dispatch({
                     type: LOAD_MESSAGES,
@@ -92,7 +91,7 @@ export const newRoom = () => {
                     ...selected.reduce((acc, cur) => [...acc, cur._id], [])
                 ]
             }
-            emit(NEW_ROOM, room, function(error) {
+            emit(NEW_ROOM, room, error => {
                 if (error) {
                     dispatch(addError(error))
                     reject()
@@ -107,7 +106,7 @@ export const newRoom = () => {
 export const newMessage = (roomId, msg) => {
     return (dispatch, _, { emit }) => {
         return new Promise((resolve, reject) => {
-            emit(NEW_MESSAGE, { roomId, msg }, function(error) {
+            emit(NEW_MESSAGE, { roomId, msg }, error => {
                 if (error) {
                     dispatch(addError(error))
                     reject()

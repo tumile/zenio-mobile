@@ -38,12 +38,9 @@ export const authenticate = (path, data) => {
 
 export const logout = () => {
     return dispatch => {
-        return new Promise((resolve, reject) => {
-            setAuthHeader(null)
-            setupSocket(null)
-            dispatch(removeUser())
-            resolve()
-        })
+        setAuthHeader(null)
+        setupSocket(null)
+        dispatch(removeUser())
     }
 }
 
