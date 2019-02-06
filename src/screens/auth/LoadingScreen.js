@@ -21,6 +21,4 @@ class LoadingScreen extends React.Component {
     }
 }
 
-export { Loading }
-
 export default connect(({ user: { token } }) => ({ token }))(LoadingScreen)

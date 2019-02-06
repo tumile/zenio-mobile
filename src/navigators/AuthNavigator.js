@@ -1,15 +1,28 @@
-import { createSwitchNavigator } from "react-navigation"
-import LoadingScreen from "../screens/auth/LoadingScreen"
+import { createStackNavigator } from "react-navigation"
 import SigninScreen from "../screens/auth/SigninScreen"
 import SignupScreen from "../screens/auth/SignupScreen"
 
-export default createSwitchNavigator(
+export default createStackNavigator(
     {
-        Loading: LoadingScreen,
-        Signin: SigninScreen,
+        Signin: {
+            screen: SigninScreen,
+            navigationOptions: {
+                header: null
+            }
+        },
         Signup: SignupScreen
     },
     {
-        initialRouteName: "Loading"
+        initialRouteName: "Signin",
+        defaultNavigationOptions: {
+            headerStyle: {
+                shadowOpacity: 0,
+                shadowOffset: {
+                    height: 0
+                },
+                shadowRadius: 0,
+                elevation: 0
+            }
+        }
     }
 )
