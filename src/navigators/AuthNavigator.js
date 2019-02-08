@@ -14,14 +14,12 @@ export default createStackNavigator(
     },
     {
         initialRouteName: "Signin",
-        defaultNavigationOptions: {
-            headerStyle: {
-                shadowOpacity: 0,
-                shadowOffset: {
-                    height: 0
-                },
-                shadowRadius: 0,
-                elevation: 0
+        navigationOptions: {
+            header: {
+                style: {
+                    elevation: 0, //remove shadow on Android
+                    shadowOpacity: 0 //remove shadow on iOS
+                }
             }
         }
     }
